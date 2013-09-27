@@ -1442,6 +1442,7 @@ class NewExprNode(AtomicExprNode):
     def analyse_types(self, env):
         if self.type is None:
             self.infer_type(env)
+        self.pymalloc_new = env.directives['pymalloc_new']
         return self
 
     def may_be_none(self):
@@ -1451,7 +1452,12 @@ class NewExprNode(AtomicExprNode):
         pass
 
     def calculate_result_code(self):
-        return "new " + self.class_type.declaration_code("")
+        if self.pymalloc_new:
+            return (("new (PyMem_Malloc(sizeof(%s))) " %
+                        self.class_type.declaration_code(""))
+                        + self.class_type.declaration_code(""))
+        else:
+            return "new " + self.class_type.declaration_code("")
 
 
 class NameNode(AtomicExprNode):

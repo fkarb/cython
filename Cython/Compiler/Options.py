@@ -142,6 +142,7 @@ directive_defaults = {
     'binding': None,
     'experimental_cpp_class_def': False,
     'freelist': 0,
+    'pymalloc_new': False,
 }
 
 # Extra warning directives

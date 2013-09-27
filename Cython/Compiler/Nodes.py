@@ -4857,6 +4857,7 @@ class DelStatNode(StatNode):
             else:
                 error(arg.pos, "Deletion of non-Python, non-C++ object")
             #arg.release_target_temp(env)
+        self.pymalloc_new = env.directives['pymalloc_new']
         return self
 
     def nogil_check(self, env):
@@ -4873,7 +4874,14 @@ class DelStatNode(StatNode):
                     code, ignore_nonexisting=self.ignore_nonexisting)
             elif arg.type.is_ptr and arg.type.base_type.is_cpp_class:
                 arg.generate_result_code(code)
-                code.putln("delete %s;" % arg.result())
+                if self.pymalloc_new:
+                    cname = arg.type.base_type.declaration_code("")
+                    if "::" in cname:
+                        namespace, cname = cname.rsplit("::", 1)
+                    code.putln("(%s)->~%s();" % (arg.result(), cname))
+                    code.putln("PyMem_Free((void*)(%s));" % arg.result())
+                else:
+                    code.putln("delete %s;" % arg.result())
             # else error reported earlier
 
     def annotate(self, code):
