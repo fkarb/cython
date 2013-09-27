@@ -1453,7 +1453,7 @@ class NewExprNode(AtomicExprNode):
 
     def calculate_result_code(self):
         if self.pymalloc_new:
-            return (("new (PyMem_Malloc(sizeof(%s))) " %
+            return (("new (PyObject_Malloc(sizeof(%s))) " %
                         self.class_type.declaration_code(""))
                         + self.class_type.declaration_code(""))
         else:

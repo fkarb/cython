@@ -4879,7 +4879,7 @@ class DelStatNode(StatNode):
                     if "::" in cname:
                         namespace, cname = cname.rsplit("::", 1)
                     code.putln("(%s)->~%s();" % (arg.result(), cname))
-                    code.putln("PyMem_Free((void*)(%s));" % arg.result())
+                    code.putln("PyObject_Free((void*)(%s));" % arg.result())
                 else:
                     code.putln("delete %s;" % arg.result())
             # else error reported earlier
