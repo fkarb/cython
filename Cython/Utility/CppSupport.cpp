@@ -44,3 +44,18 @@ static void __Pyx_CppExn2PyErr() {
   }
 }
 #endif
+
+/////////////// CppPyMemNew.proto ///////////////
+
+#ifndef __Pyx_CppPyMemNew
+#include <new>
+
+static void* __Pyx_PyObject_Malloc(size_t nbytes) throw(std::bad_alloc) {
+  // check result of PyObject_Malloc and raise bad_alloc if NULL
+  void* ptr = PyObject_Malloc(nbytes);
+  if (NULL == ptr) {
+	throw std::bad_alloc();
+  }
+  return ptr;
+}
+#endif

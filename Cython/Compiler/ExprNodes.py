@@ -1449,11 +1449,13 @@ class NewExprNode(AtomicExprNode):
         return False
 
     def generate_result_code(self, code):
-        pass
+        if self.pymalloc_new:
+            code.globalstate.use_utility_code(
+                UtilityCode.load_cached("CppPyMemNew", "CppSupport.cpp"))
 
     def calculate_result_code(self):
         if self.pymalloc_new:
-            return (("new (PyObject_Malloc(sizeof(%s))) " %
+            return (("new (__Pyx_PyObject_Malloc(sizeof(%s))) " %
                         self.class_type.declaration_code(""))
                         + self.class_type.declaration_code(""))
         else:
